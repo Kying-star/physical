@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title></title>
+    <style type="text/css">
+
+    #myCanvas {
+    box-shadow: -2px -2px 2px #efefef,5px 5px 5px #b9b9b9;
+    margin-right: 0px;
+    float :right;
+    }
+    div{
+        margin-top:50px;
+        margin-left: 20px;
+    }
+    #msg{
+        font-size: 25;
+        color: rgb(1, 204, 255);
+    }
+    .msg_box{
+                width: 200px;
+        height: 200px;
+        background-color: bisque;
+    }
+    #table{
+        width: 350px;
+        height: 200px;
+        background-color: aquamarine;
+    }
+    </style>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="1000px" height="1000px"></canvas>
+    <div>
+        <lu>
+            <li><button onclick="draw()">开火！！！</button></li>
+            <li><button id="clearsrceem">清屏</button></li>
+            <li>猎手坐标设置</li>
+            <li><input placeholder="请输入x" id="input_x" type="text"></li>
+            <li><input placeholder="请输入y"  id="input_y" type="text"></li>
+            <li><button id="person_btn">确定</button></li>
+            <li>猴子坐标设置</li>
+            <li><input placeholder="请输入i"  id="input_i" type="text"></li>
+            <li><input placeholder="请输入j"  id="input_j" type="text"></li>
+            <li><button id="monkey_btn">确定</button></li>
+            <li>猎手初始坐标为<span id="person_pos"></span></li>
+            <li>猴子初始坐标为<span id="monkey_pos"></span></li>
+        </lu>
+        <div class="msg_box">
+            小星为您播报<br><span id="msg"></span>
+        </div>
+        <div id="table">
+
+        </div>
+
+
+    
+        
+    </div>
+
+
+<script type="text/javascript">
+
+var x = 0,y = 600,k,t = 0;
+
+var i = 300,j =0;
+var person_pos = document.getElementById('person_pos');
+    person_pos.innerHTML = "("+x+","+y+")"
+var person_btn = document.getElementById('person_btn');
+
+person_btn.onclick  = ()=>{
+    var pos_x = document.getElementById("input_x").value;
+    var pos_y = document.getElementById("input_y").value;
+    x = parseInt(pos_x);;
+    y = parseInt(pos_y);;
+    console.log(x,y)
+    person_pos.innerHTML = "("+x+","+y+")";
+}
+monkey_btn.onclick = ()=>{
+    var pos_i = document.getElementById("input_i").value;
+    var pos_j = document.getElementById("input_j").value;
+    i = parseInt(pos_i);;
+    j = parseInt(pos_j);;
+    console.log(i,j);
+    monkey_pos.innerHTML = "("+i+","+j+")";
+}
+
+var monkey_pos = document.getElementById('monkey_pos');
+monkey_pos.innerHTML = "("+i+","+j+")"
+var c=document.getElementById("myCanvas");
+var cxt=c.getContext("2d");
+setInterval(()=>{
+    console.log(t,k)
+},5000)
+
+var draw = ()=>{
+    if(x<i){
+        k = -(y-j)/(x-i);
+    }else if(x>i){
+        k = (y-j)/(x-i);
+    }else{
+        k = 0;
+    }
+
+cxt.beginPath();
+cxt.arc(x,y,2,0,Math.PI*2,true);  
+cxt.arc(i,j,2,0,Math.PI*2,true);
+cxt.closePath();
+cxt.fill(); 
+T = setInterval("parabola()",10);
+m = setInterval("freeball()",10);
+
+}
+function parabola(){
+    cxt.beginPath();
+    if(x<i){
+       x = x + t;     
+    }else if(x>i){
+       x = x - t;
+    }else{
+       x = x;
+    }
+    if(x==i){
+        y = y - t + (4.9*t*t)*0.1;
+    }else{
+        y = y - k*t+(4.9*t*t)*0.1; 
+    }
+    cxt.arc(x,y,2,0,Math.PI*2,true);
+    cxt.fillStyle="#000";
+    cxt.closePath();
+    cxt.fill();
+    t+=0.01;
+
+    if(x>i-5&&x<i+5&&y>j-5&&y<j+5){
+
+        clearInterval(T);
+        clearInterval(m);
+        var msg = document.getElementById('msg').innerHTML = "击中了！！！<br>nice！！！"; 
+        var table = document.getElementById('table')
+        var li = document.createElement('li');
+        var pos_x = document.getElementById("input_x").value;
+        var pos_y = document.getElementById("input_y").value;
+        var pos_i = document.getElementById("input_i").value;
+        var pos_j = document.getElementById("input_j").value;
+        li.innerHTML = `猴子坐标(${pos_i},${pos_j}) 猎人坐标(${pos_x},${pos_y}) 击中了`;
+        table.appendChild(li);
+        console.log('击中了');
+    }
+    else if(x>1000||y>1000){
+        clearInterval(T);
+        clearInterval(m);
+        var msg = document.getElementById('msg').innerHTML = "未击中。。。。";
+    }
+} 
+var freeball = ()=>{
+    
+    
+    cxt.beginPath();
+
+    j = j + (4.9*t*t)*0.1;
+    cxt.arc(i,j,2,0,Math.PI*2,true);
+    cxt.fillStyle="coral";
+    cxt.closePath();
+    cxt.fill();
+    t+=0.01;
+    if(i>1000||j>1000){
+        clearInterval(m);
+        clearInterval(T);
+        var msg = document.getElementById('msg').innerHTML = "未击中。。。。";
+    }
+
+    
+}
+var clear = document.getElementById('clearsrceem');
+clear.onclick = function clear(){
+   var msg = document.getElementById('msg').innerHTML = " ";
+   var pos_x = document.getElementById("input_x").value;
+    var pos_y = document.getElementById("input_y").value;
+    x = parseInt(pos_x);
+    y = parseInt(pos_y);
+    person_pos.innerHTML = "("+x+","+y+")";
+    var pos_i = document.getElementById("input_i").value;
+    var pos_j = document.getElementById("input_j").value;
+    i = parseInt(pos_i);
+    j = parseInt(pos_j);
+    monkey_pos.innerHTML = "("+i+","+j+")";
+    t = 0;
+    clearInterval(T);
+    clearInterval(m);
+    cxt.clearRect(0,0,1000,1000);
+}
+
+</script>
+</body>
+</html>
